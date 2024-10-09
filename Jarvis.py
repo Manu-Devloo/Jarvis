@@ -27,8 +27,8 @@ class ConversationHistory:
         
         self.memory_items = 0
 
-    def refresh_memory(self):
-        self.history.pop(len(self.long_term_memory) + 1)
+    # def refresh_memory(self):
+    #     self.history.pop(len(self.long_term_memory) + 1)
             
     def load_long_term_memory(self):
         if os.path.exists(self.long_term_memory_file):
@@ -51,9 +51,6 @@ class ConversationHistory:
     def save_message(self, message, role):
         history_item = {"role": role, "content": str(message)}
         self.history.append(history_item)
-        
-        if self.memory_items > 50:
-            self.refresh_memory()
         
         self.memory_items += 1
         
@@ -153,7 +150,7 @@ def chat(message = None):
             )
         elif tool.function.name == "remember_data":
             function_response = function_to_call(
-                json.loads(tool.function.arguments)["memory"], "system"
+                json.loads(tool.function.arguments)["memory"], "assistant"
             )
         
         history.save_message(function_response, "assistant")
@@ -170,8 +167,6 @@ while True:
 
     if user_message.lower() == "quit" or user_message.lower() == "exit":
         break
-    # elif "remember" in user_message.lower():
-    #     history.save_message_forever(user_message, "system")
 
     response = chat(user_message)
 
